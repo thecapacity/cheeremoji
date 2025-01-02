@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "wrangler": "^3.99.0"
-  },
-  "scripts": {
-    "dev": "wrangler dev --persist-to data"
-  }
-}
