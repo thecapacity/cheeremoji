@@ -24,10 +24,11 @@ async def msg(req: Request):
         + env.MESSAGE
     }
 
-@app.get("/count/")
+@app.get("/count")
 async def get_count(req: Request):
     env = req.scope["env"]
     count = await env.EMOJI_API.get("count")
+    await env.EMOJI_API.put("count", int(count) + 1)
     return { "count": count }
 
 @app.get("/count/{num}")
