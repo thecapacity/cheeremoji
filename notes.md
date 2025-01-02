@@ -24,3 +24,16 @@
 ## In Prod
 
 `To have wrangler dev connect to your Workers KV namespace running on Cloudflare's global network, call wrangler dev --remote instead. This will use the preview_id of the KV binding configuration in the wrangler.toml file. This is how a wrangler.toml file looks with the preview_id specified.` - https://developers.cloudflare.com/kv/concepts/kv-bindings/#use-kv-bindings-when-developing-locally
+
+Routing
+
+```Set up a route in the dashboard
+Before you set up a route, make sure you have a DNS record set up for the domain or subdomain you would like to route to.
+To set up a route in the dashboard:
+Log in to the Cloudflare dashboard ↗ and select your account.
+Go to Workers & Pages and in Overview, select your Worker.
+Go to Settings > Triggers > Routes > Add route.
+Enter the route and select the zone it applies to.
+Select Add route.```
+
+- https://developers.cloudflare.com/workers/configuration/routing/routes/#set-up-a-route-in-the-dashboard
