@@ -37,3 +37,7 @@ Enter the route and select the zone it applies to.
 Select Add route.```
 
 - https://developers.cloudflare.com/workers/configuration/routing/routes/#set-up-a-route-in-the-dashboard
+
+Create Cloudflare API key: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
+    - Pick Workers edit, add Workers AI, limit to domain, user, range, etc.
+        - Permissions breakout: https://developers.cloudflare.com/fundamentals/api/reference/permissions/
