@@ -16,3 +16,8 @@
   * Emoji package: https://pypi.org/project/emoji/
   * Websockets: https://developers.cloudflare.com/workers/runtime-apis/websockets/
     - Hibernate: https://developers.cloudflare.com/durable-objects/best-practices/websockets/#websocket-hibernation-api
+
+## Creation
+
+`npm create cloudflare@latest -y -- --type hello-world-python --lang python -- telemetry disable`
+
