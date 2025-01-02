@@ -1,6 +1,11 @@
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 
+## Example from: https://github.com/cloudflare/python-workers-examples/blob/main/03-fastapi/src/worker.py
+## More: https://developers.cloudflare.com/workers/languages/python/packages/fastapi/
+## Generic: https://developers.cloudflare.com/workers/languages/python/examples/
+## Lang: https://developers.cloudflare.com/workers/languages/python/
+
 async def on_fetch(request, env):
     import asgi
     return await asgi.fetch(app, request, env)
@@ -9,37 +14,25 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    await env.FOO.put("count", "1")
+    return { "message": "Hello, World!" }
 
-    count = await env.FOO.get("count")
-
-    return {"message": "Hello, World!", "count": count}
-
-@app.get("/env")
-async def env(req: Request):
+@app.get("/msg")
+async def msg(req: Request):
     env = req.scope["env"]
     return {
         "message": "Here is an example of getting an environment variable: "
         + env.MESSAGE
     }
 
-class Item(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
-    tax: float | None = None
+@app.get("/count/")
+async def get_count(req: Request):
+    env = req.scope["env"]
+    count = await env.EMOJI_API.get("count")
+    return { "count": count }
 
-@app.post("/items/")
-async def create_item(item: Item):
-    return item
-
-@app.put("/items/{item_id}")
-async def update_item(item_id: int, item: Item, q: str | None = None):
-    result = {"item_id": item_id, **item.model_dump()}
-    if q:
-        result.update({"q": q})
-    return result
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
+@app.get("/count/{num}")
+async def read_count(req: Request, num: int | None = 0):
+    env = req.scope["env"]
+    await env.EMOJI_API.put("count", num)
+    count = await env.EMOJI_API.get("count")
+    return { "count": count }
