@@ -1,4 +1,5 @@
 ## Project Specific - Ignore 
+data/
 node_modules/
 
 ## Below this is GitHub default for python
