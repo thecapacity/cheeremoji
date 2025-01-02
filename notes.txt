@@ -2,5 +2,6 @@
 
   * Wrangler Commands: https://developers.cloudflare.com/workers/wrangler/commands/
   * Wrangler Config: https://developers.cloudflare.com/workers/wrangler/configuration/
+  * Local Dev: https://developers.cloudflare.com/workers/testing/local-development/
 
 
