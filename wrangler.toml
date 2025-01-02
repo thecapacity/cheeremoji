@@ -11,7 +11,7 @@ MESSAGE = "This is an environment variable"
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
 binding = "EMOJI_API"
-id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+id = "a450183e806d434c868ab03a4f8c068e"
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
