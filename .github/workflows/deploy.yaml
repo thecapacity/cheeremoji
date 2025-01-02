@@ -1,0 +1,24 @@
+name: CheerEmoji - Deploy
+## https://github.com/cloudflare/wrangler-action
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+        - main
+        - publish
+
+concurrency:
+  group: cheeremoji.deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
