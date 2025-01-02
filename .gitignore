@@ -1,6 +1,8 @@
 ## Project Specific - Ignore 
 data/
 node_modules/
+## KV data seems to be stored in .wrangler/sate/v3/kv/...
+.wrangler/
 
 ## Below this is GitHub default for python
 
