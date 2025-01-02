@@ -21,3 +21,6 @@
 
 `npm create cloudflare@latest -y -- --type hello-world-python --lang python -- telemetry disable`
 
+## In Prod
+
+`To have wrangler dev connect to your Workers KV namespace running on Cloudflare's global network, call wrangler dev --remote instead. This will use the preview_id of the KV binding configuration in the wrangler.toml file. This is how a wrangler.toml file looks with the preview_id specified.` - https://developers.cloudflare.com/kv/concepts/kv-bindings/#use-kv-bindings-when-developing-locally
