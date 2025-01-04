@@ -150,8 +150,6 @@ async def on_fetch(request, env):
             code = path[1]
             code = code.replace(":", "").lower()
             code = f":{code}:"
-
-            console.log(f"Checking Code: {code}")
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
