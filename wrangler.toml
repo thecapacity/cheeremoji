@@ -17,7 +17,7 @@ routes = [
 ## experimental_serve_directly = false
 
 [vars]
-VERSION = "0.1"
+VERSION = "0.1" ## Access with env.VERSION
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces

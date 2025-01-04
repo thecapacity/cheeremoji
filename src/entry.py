@@ -70,35 +70,6 @@ async def handle_cheeremoji_get_code(request, env):
     data = await get_cheeremoji(env)
     return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
 
-
-
-async def get_count(request, env):
-    count = await env.EMOJI_API.get("count")
-    await env.EMOJI_API.put("count", int(count) + 1)
-    return Response.new({ "count": count })
-
-async def set_count_get(request, env):
-    url = urlparse(request.url)
-    
-    match = re.search(r"/(\d+)$", url.path)
-    num = int(match.group(1)) if match else 0
-    
-    await env.EMOJI_API.put("count", num)
-    count = await env.EMOJI_API.get("count") ## may not be necessary but may guard against concurrent updates
-
-    return Response.new({ "count": count })
-
-async def set_count_post(request, env):
-    data = await request.json()
-    num = data.count
-    
-    if num:
-        console.log(f"POST SET - num: {num}")
-        await env.EMOJI_API.put("count", num)
-    
-    count = await env.EMOJI_API.get("count") ## may not be necessary but may guard against concurrent updates
-    return Response.new({ "count": count })
-
 async def on_fetch(request, env):
     global map
     await loadMap()
@@ -131,14 +102,6 @@ async def on_fetch(request, env):
         elif request.method == "GET" and (url.path.lower() == "/map" or url.path.lower() == "/map/"):
             return await handle_get_map(request, env)
         
-        elif request.method == "GET" and (url.path == "/count" or url.path == "/count/"):
-            return await get_count(request, env)
-        
-        elif request.method == "GET" and re.match(r"^/count/\d+$", url.path):
-            return await set_count_get(request, env)
-
-        elif request.method == "POST" and (url.path == "/count" or url.path == "/count/"):
-            return await set_count_post(request, env)
 
         else:
             return Response.new("Path Not Found", status=404)
