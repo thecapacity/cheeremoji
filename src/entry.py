@@ -17,6 +17,11 @@ from js import Response, Object, Headers, JSON, console, fetch
 ## emoji/🥇
 ## :1st_place_medal:
 
+from pyodide.ffi import to_js as _to_js
+# to_js converts between Python dictionaries and JavaScript Objects
+def to_js(obj):
+   return _to_js(obj, dict_converter=Object.fromEntries)
+
 map = None
 async def loadMap():
     global map   
@@ -38,22 +43,22 @@ async def get_cheeremoji(env):
     emoji = map[shortcode]
     
     data = {
-        'emoji': emoji,
-        'code': shortcode
+        "emoji": emoji,
+        "code": shortcode
     }
     return data
 
 async def handle_get_cheeremoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new(data, headers=response_headers)
+    return Response.new(json.dumps(data), headers=response_headers)
 
 async def handle_get_cheeremoji_emoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "emoji": data["emoji"] }, headers=response_headers)
+    return Response.new( json.dumps({ "emoji": data["emoji"] }), headers=response_headers)
 
 async def handle_get_cheeremoji_code(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "code": data["code"] }, headers=response_headers)
+    return Response.new( json.dumps({ "code": data["code"] }), headers=response_headers)
 
 async def handle_get_map(request, env, response_headers):
     """    Handle the main request for the Emoji Map via the / path.    """
@@ -137,29 +142,58 @@ async def on_fetch(request, env):
 
             if await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
-                return Response.new({ "len": len(emoji), "spaces": " " in emoji, "emoji": emoji, "valid": await is_valid_emoji(emoji) }, headers=response_headers, status=200)
-            else:
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=404)
+            
+            return await handle_get_cheeremoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
-            ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
             path = url.path.strip("/").split("/")
             code = path[1]
             code = code.replace(":", "").lower()
             code = f":{code}:"
-
-            console.log(f"Checking Code: {code}")
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=200)
+            
+            return await handle_get_cheeremoji(request, env, response_headers)
+
+        elif request.method == "POST":
+            data = await request.json()
+            data = data.to_py()
+
+            console.log(f"POST Data: {data}")
+            
+            if isinstance(data, dict):
+                emoji = data.get("emoji", None)
+                code = data.get("code", None)
             else:
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=404)
+                emoji = None
+                code = None
+            
+            if emoji:
+                emoji = unicodedata.normalize("NFC", emoji.strip())
+
+            if code:
+                code = code.replace(":", "").lower()
+                code = f":{code}:"
+
+            ## If we get both let's only do the code presuming it's valid
+            if await is_valid_code(code):
+                await set_cheeremoji_code(env, code)            
+            elif await is_valid_emoji(emoji):
+                await set_cheeremoji_emoji(env, emoji)
+            else:
+                console.log("Invalid POST: {data}")
+                console.log(f"Code: {code}")
+                console.log(f"Emoji: {emoji}")
+
+                return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+
+            return await handle_get_cheeremoji(request, env, response_headers)
 
         else:
-            return Response.new("Path Not Found", status=404)
+            return Response.new(json.dumps("Path Not Found"), headers=response_headers, status=404)
 
     except Exception as e:
         error_details = traceback.format_exc() # Include the traceback in the response
-        return Response.new(f"Error: {str(e)}\n\nDetails:\n{error_details}", status=500)
+        return Response.new(json.dumps(f"Error: {str(e)}\n\nDetails:\n{error_details}"), headers=response_headers, status=500)
 
