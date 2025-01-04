@@ -1,6 +1,8 @@
 import re
-from js import Response
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
+import traceback
+
+from js import Response, Object, Headers, JSON, console, fetch
 
 ## Example from: https://github.com/cloudflare/python-workers-examples/blob/main/03-fastapi/src/worker.py
 ## More: https://developers.cloudflare.com/workers/languages/python/packages/fastapi/
