@@ -126,7 +126,8 @@
                 }
             });
 
-            document.getElementById('emoji').textContent = fetchEmoji();
+            document.addEventListener('DOMContentLoaded', fetchEmoji());
+
         };
     </script>
 </body>
