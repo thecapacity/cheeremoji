@@ -26,6 +26,7 @@ async def loadMap():
 
     return
 
+async def handle_get_map(request, env):
     """    Handle the main request for the Emoji Map via the / path.    """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
     ## NOTE: even if it's a local JSON file in env.ASSETS you still have to env.ASSETS.fetch("http://localhost:port/file.json")
