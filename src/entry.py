@@ -95,7 +95,12 @@ async def set_cheeremoji_code(env, code):
 async def on_fetch(request, env):
     global map
     await loadMap()
-    response_headers = [("Content-Type", "application/json; charset=utf-8")]
+    response_headers = [
+        ("Content-Type", "application/json; charset=utf-8"),
+        ("Access-Control-Allow-Origin", "*"),
+        ("Access-Control-Allow-Methods", "GET, POST, OPTIONS"),
+        ("Access-Control-Allow-Headers", "Content-Type")
+    ]
 
     url = urlparse(request.url)
     params = parse_qs(url.query)
