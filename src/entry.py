@@ -48,6 +48,30 @@ async def handle_get_map(request, env):
 
     return Response.new(result, headers=headers)
 
+async def get_cheeremoji(env):
+    emoji = await env.EMOJI_API.get("count")
+    shortcode = map[emoji]
+    
+    data = {
+        'emoji': emoji,
+        'code': shortcode
+    }
+    return data
+
+async def handle_get_cheeremoji(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new(data, headers=[("content-type", "application/json")])
+
+async def handle_cheeremoji_get_emoji(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new({ "emoji": data["emoji"] }, headers=[("content-type", "application/json")])
+
+async def handle_cheeremoji_get_code(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
+
+
+
 async def get_count(request, env):
     count = await env.EMOJI_API.get("count")
     await env.EMOJI_API.put("count", int(count) + 1)
