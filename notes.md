@@ -41,3 +41,6 @@ Select Add route.```
 Create Cloudflare API key: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
     - Pick Workers edit, add Workers AI, limit to domain, user, range, etc.
         - Permissions breakout: https://developers.cloudflare.com/fundamentals/api/reference/permissions/
+
+## Bug Tracking
+  * Worker Issues: https://github.com/cloudflare/workers-sdk/
