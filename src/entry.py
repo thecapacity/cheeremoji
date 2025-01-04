@@ -126,7 +126,6 @@ async def on_fetch(request, env):
             return await handle_get_map(request, env, response_headers)
         
         elif request.method == "GET" and re.match(r"^/emoji/.+/?$", url.path.lower()):
-            ## FIXME: Find a better way to parse the emoji from the URL so it doesn't end up as hex
             path = url.path.strip("/").split("/")
             emoji = path[1]
             return Response.new({ emoji, await is_valid_emoji(emoji) }, headers=[("content-type", "application/json")])
