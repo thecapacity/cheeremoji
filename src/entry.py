@@ -31,6 +31,28 @@ async def is_valid_emoji(emoji):
 async def is_valid_code(code):
     return code in map.keys()
 
+async def get_cheeremoji(env):
+    shortcode = await env.EMOJI_API.get("code")
+    emoji = map[shortcode]
+    
+    data = {
+        'emoji': emoji,
+        'code': shortcode
+    }
+    return data
+
+async def handle_get_cheeremoji(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new(data, headers=[("content-type", "application/json")])
+
+async def handle_get_cheeremoji_emoji(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new({ "emoji": data["emoji"] }, headers=[("content-type", "application/json")])
+
+async def handle_get_cheeremoji_code(request, env):
+    data = await get_cheeremoji(env)
+    return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
+
 async def handle_get_map(request, env):
     """    Handle the main request for the Emoji Map via the / path.    """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
@@ -55,31 +77,18 @@ async def handle_get_map(request, env):
 
     return Response.new(result, headers=headers)
 
-async def get_cheeremoji(env):
-    emoji = await env.EMOJI_API.get("count")
-    shortcode = map[emoji]
-    
-    data = {
-        'emoji': emoji,
-        'code': shortcode
-    }
-    return data
+async def set_cheeremoji_emoji(env, emoji):
+    code = next((key for key, value in map.items() if value == emoji), None)
+    if await is_valid_code(code):
+        console.log(f"Setting emoji to: {code} -> {emoji}")
+        await env.EMOJI_API.put("code", code)
+    return
 
-async def set_cheeremoji(env, emoji):
-    await env.EMOJI_API.put("count", "🥇")
-    return await get_cheeremoji(env)
-
-async def handle_get_cheeremoji(request, env):
-    data = await get_cheeremoji(env)
-    return Response.new(data, headers=[("content-type", "application/json")])
-
-async def handle_get_cheeremoji_emoji(request, env):
-    data = await get_cheeremoji(env)
-    return Response.new({ "emoji": data["emoji"] }, headers=[("content-type", "application/json")])
-
-async def handle_get_cheeremoji_code(request, env):
-    data = await get_cheeremoji(env)
-    return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
+async def set_cheeremoji_code(env, code):
+    if await is_valid_code(code):
+        console.log(f"Setting emoji to code: {code}")
+        await env.EMOJI_API.put("code", code)
+    return
 
 async def on_fetch(request, env):
     global map
