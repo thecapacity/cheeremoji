@@ -4,13 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheeremoji</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/NOstyle.css">
+    <style>
+        body {
+            text-align: center;
+            margin-top: 20%;
+        }
+
+        #emoji-display {
+            font-size: 3em;
+        }
+
+        #emoji-input {
+            font-size: 1.25em;
+        }
+
+        button {
+            font-size: 1.25em;
+        }
+
+        #output {
+            margin-top: 2em;
+            font-size: 1em;
+        }
+    </style>
 </head>
 <body>
-    <div id="emoji"></div>
-    <form id="emoji-form">
-        <input type="text" id="emoji-input" placeholder="Enter an emoji" />
-    </form>
+    <div>
+        <div id="emoji-display"></div>
+        <form id="emoji-input">
+            <input type="text" id="emoji-input" placeholder="Enter an emoji or shortcode"/>
+        </form>
+        <pre id="output"></pre>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.jquery.min.js" integrity="sha512-AnBkpfpJIa1dhcAiiNTK3JzC3yrbox4pRdrpw+HAI3+rIcfNGFbVXWNJI0Oo7kGPb8/FG+CMSG8oADnfIbYLHw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -18,7 +44,7 @@
     <script>
         let emojiMap = {};
 
-        function loadEmojiMap(callback) {
+        async function loadEmojiMap(callback) {
             fetch('static/emojiMap.json')
                 .then(response => response.json())
                 .then(data => {
@@ -28,8 +54,18 @@
                 .catch(error => console.error('Error loading emoji map:', error));
         }
 
-        function fetchEmoji() {
-            return "";
+        async function fetchEmoji() {
+            try {
+                const response = await fetch('https://api.cheeremoji.com/');
+                const data = await response.json();
+                document.getElementById('emoji-display').innerText = data.emoji;
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error fetching initial emoji:', error);
+                document.getElementById('emoji-display').innerText = '❓';
+                document.getElementById('output').innerText = 'Error fetching initial emoji';
+                document.getElementById('output').innerText += JSON.stringify(data, null, 2);
+            }
         }
 
         var substringMatcher = function(strs) { // via https://twitter.github.io/typeahead.js/examples/
@@ -81,7 +117,7 @@
             });
 
             // Prevent form submission and handle Enter key
-            document.getElementById('emoji-form').addEventListener('submit', function(e) {
+            document.getElementById('emoji-input').addEventListener('submit', function(e) {
                 e.preventDefault(); // Prevent the form from submitting
                 const inputValue = document.getElementById('emoji-input').value;
                 // Check if the input value is in the emojiMap
@@ -90,7 +126,10 @@
                 }
             });
 
-            document.getElementById('emoji').textContent = fetchEmoji();
+            // FIXME: probably should try for this model of loading the emojiMap
+            //document.addEventListener('DOMContentLoaded', loadEmojiMap);
+            document.addEventListener('DOMContentLoaded', fetchEmoji());
+
         };
     </script>
 </body>
