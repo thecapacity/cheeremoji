@@ -44,7 +44,7 @@
     <script>
         let emojiMap = {};
 
-        function loadEmojiMap(callback) {
+        async function loadEmojiMap(callback) {
             fetch('static/emojiMap.json')
                 .then(response => response.json())
                 .then(data => {
@@ -54,8 +54,18 @@
                 .catch(error => console.error('Error loading emoji map:', error));
         }
 
-        function fetchEmoji() {
-            return "";
+        async function fetchEmoji() {
+            try {
+                const response = await fetch('https://api.cheeremoji.com/');
+                const data = await response.json();
+                document.getElementById('emoji-display').innerText = data.emoji;
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error fetching initial emoji:', error);
+                document.getElementById('emoji-display').innerText = '❓';
+                document.getElementById('output').innerText = 'Error fetching initial emoji';
+                document.getElementById('output').innerText += JSON.stringify(data, null, 2);
+            }
         }
 
         var substringMatcher = function(strs) { // via https://twitter.github.io/typeahead.js/examples/
