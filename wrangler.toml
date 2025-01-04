@@ -8,6 +8,14 @@ routes = [
   { pattern = "api.cheeremoji.com", custom_domain = true }
 ]
 
+## https://developers.cloudflare.com/workers/static-assets/
+## Note: worked ok when serving directly but accessing [via .fetch("asset as URL")] was really awkward
+## [assets]
+## directory = "./static/"
+## binding = "ASSETS"
+## #experimental_serve_directly = true
+## experimental_serve_directly = false
+
 [vars]
 MESSAGE = "This is an environment variable"
 
