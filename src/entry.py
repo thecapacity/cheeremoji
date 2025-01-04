@@ -119,8 +119,17 @@ async def on_fetch(request, env):
     ##console.log(f"{dir(env.ASSETS)}")
 
     try:
-        if url.path == "/":
-            return await handle_main(request, env)
+        if request.method == "GET" and (url.path == "/" or url.path == ""):
+            return await handle_get_cheeremoji(request, env)
+
+        elif request.method == "GET" and re.match(r"^/emoji/?$", url.path.lower()):
+            return await handle_get_cheeremoji_emoji(request, env)
+
+        elif request.method == "GET" and re.match(r"^/code/?$", url.path.lower()):
+            return await handle_get_cheeremoji_code(request, env)
+
+        elif request.method == "GET" and (url.path.lower() == "/map" or url.path.lower() == "/map/"):
+            return await handle_get_map(request, env)
         
         elif request.method == "GET" and (url.path == "/count" or url.path == "/count/"):
             return await get_count(request, env)
