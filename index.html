@@ -129,6 +129,11 @@
                     document.getElementById('emoji').textContent = emojiMap[suggestion];
                 });
             });
+            document.addEventListener('DOMContentLoaded', loadEmojiMap);
+            document.addEventListener('DOMContentLoaded', fetchEmoji);
+            // Run fetchEmoji periodically every 30 seconds
+            setInterval(fetchEmoji, 30000);
+
 
             // Prevent form submission and handle Enter key
             document.getElementById('emoji-input').addEventListener('submit', function(e) {
@@ -139,11 +144,6 @@
                     document.getElementById('emoji').textContent = emojiMap[inputValue];
                 }
             });
-
-            // FIXME: probably should try for this model of loading the emojiMap
-            //document.addEventListener('DOMContentLoaded', loadEmojiMap);
-            document.addEventListener('DOMContentLoaded', fetchEmoji());
-
         };
     </script>
 </body>
