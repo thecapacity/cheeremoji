@@ -80,6 +80,7 @@
                 if (!input) return;
                 const endpoint = input.length === 1 ? `/emoji/${input}` : `/code/${input}`;
                 try {
+                    console.log(endpoint);
                     const response = await fetch(`https://api.cheeremoji.com${endpoint}`);
                     const result = await response.json();
 
