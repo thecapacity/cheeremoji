@@ -69,6 +69,12 @@
             }
         }
 
+        function isEmoji(input) {
+            // Regex for Unicode emoji detection
+            const emojiRegex = /\p{Emoji}/u;
+            return emojiRegex.test(input);
+        }
+
         window.onload = function() {
             document.addEventListener('DOMContentLoaded', loadEmojiMap);
             document.addEventListener('DOMContentLoaded', fetchEmoji);
@@ -78,7 +84,11 @@
                 event.preventDefault();
                 const input = document.getElementById('emoji-input').value.trim();
                 if (!input) return;
-                const endpoint = input.length === 1 ? `/emoji/${input}` : `/code/${input}`;
+                
+                // Encode input for URL-safe transmission
+                const encodedInput = encodeURIComponent(input);
+                const endpoint = isEmoji(input) ? `/emoji/${encodedInput}` : `/code/${encodedInput}`;
+
                 try {
                     console.log(endpoint);
                     const response = await fetch(`https://api.cheeremoji.com${endpoint}`);
