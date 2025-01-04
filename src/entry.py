@@ -50,15 +50,15 @@ async def get_cheeremoji(env):
 
 async def handle_get_cheeremoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new(data, headers=response_headers)
+    return Response.new(json.dumps(data), headers=response_headers)
 
 async def handle_get_cheeremoji_emoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "emoji": data["emoji"] }, headers=response_headers)
+    return Response.new( json.dumps({ "emoji": data["emoji"] }), headers=response_headers)
 
 async def handle_get_cheeremoji_code(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "code": data["code"] }, headers=response_headers)
+    return Response.new( json.dumps({ "code": data["code"] }), headers=response_headers)
 
 async def handle_get_map(request, env, response_headers):
     """    Handle the main request for the Emoji Map via the / path.    """
