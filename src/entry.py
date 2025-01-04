@@ -31,6 +31,8 @@ async def handle_get_map(request, env):
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
     ## NOTE: even if it's a local JSON file in env.ASSETS you still have to env.ASSETS.fetch("http://localhost:port/file.json")
     ## NOTE: might as well just get it from the static site
+    ## FIXME: When this is called maybe we should update the global map data too
+
     async def gather_response(response):
         headers = response.headers
         content_type = headers["content-type"] or ""
