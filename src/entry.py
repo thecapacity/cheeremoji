@@ -44,7 +44,7 @@ async def handle_get_map(request, env):
 
     headers = Headers.new({"content-type": content_type}.items())
 
-    console.log(f"result: {result}")
+    console.log(f"getMap: {result}")
 
     return Response.new(result, headers=headers)
 
