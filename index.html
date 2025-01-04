@@ -89,9 +89,10 @@
 
                 try {
                     console.log(endpoint);
-                    const result = await response.json();
                     //const response = await fetch(`https://api.cheeremoji.com${endpoint}`);
 
+                    const result = await response.json();
+                    
                     if (!response.ok) {
                         console.log(`HTTP error! status: ${response.status}`);
                         console.log(`HTTP error! status: ${response}`);
