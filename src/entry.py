@@ -22,6 +22,7 @@ async def loadMap():
         getMapResponse = await fetch("https://cheeremoji.com/emojiMap.json")
         MapData = JSON.stringify(await getMapResponse.json())
         map = json.loads(MapData)
+        console.log(f"loadMap: {map}")
     return
 
 async def handle_get_map(request, env):
