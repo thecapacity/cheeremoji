@@ -25,6 +25,12 @@ async def loadMap():
         console.log(f"loadMap: {map}")
     return
 
+async def is_valid_emoji(emoji):
+    return emoji in map.values()
+
+async def is_valid_code(code):
+    return code in map.keys()
+
 async def handle_get_map(request, env):
     """    Handle the main request for the Emoji Map via the / path.    """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
