@@ -43,8 +43,8 @@ async def get_cheeremoji(env):
     emoji = map[shortcode]
     
     data = {
-        'emoji': emoji,
-        'code': shortcode
+        "emoji": emoji,
+        "code": shortcode
     }
     return data
 
