@@ -5,9 +5,11 @@ import traceback
 from js import Response, Object, Headers, JSON, console, fetch
 
 ## Example from: https://github.com/cloudflare/python-workers-examples/blob/main/03-fastapi/src/worker.py
+##    - https://developers.cloudflare.com/workers/examples/
 ## More: https://developers.cloudflare.com/workers/languages/python/packages/fastapi/
 ## Generic: https://developers.cloudflare.com/workers/languages/python/examples/
 ## Lang: https://developers.cloudflare.com/workers/languages/python/
+## Logging: https://developers.cloudflare.com/workers/languages/python/examples/#emit-logs-from-your-python-worker
 
 async def on_fetch(request, env):
     url = urlparse(request.url)
