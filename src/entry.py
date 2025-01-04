@@ -108,6 +108,26 @@ async def on_fetch(request, env):
         elif request.method == "GET" and url.path.lower().strip("/") == "/map":
             return await handle_get_map(request, env)
         
+        elif request.method == "GET" and re.match(r"^/emoji/.+/?$", url.path.lower()):
+            ## FIXME: Find a better way to parse the emoji from the URL so it doesn't end up as hex
+            path = url.path.strip("/").split("/")
+            emoji = path[1]
+            return Response.new({ emoji, await is_valid_emoji(emoji) }, headers=[("content-type", "application/json")])
+
+        elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
+            ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
+            path = url.path.strip("/").split("/")
+            code = path[1]
+            code = code.replace(":", "").lower()
+            code = f":{code}:"
+
+            console.log(f"Checking Code: {code}")
+            
+            if await is_valid_code(code):
+                await set_cheeremoji_code(env, code)
+                return Response.new({ code }, headers=[("content-type", "application/json")], status=200)
+            else:
+                return Response.new({ code }, headers=[("content-type", "application/json")], status=404)
 
         else:
             return Response.new("Path Not Found", status=404)
