@@ -102,6 +102,7 @@ async def set_count_post(request, env):
 async def on_fetch(request, env):
     global map
     await loadMap()
+
     url = urlparse(request.url)
     params = parse_qs(url.query)
 
