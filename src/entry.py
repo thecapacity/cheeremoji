@@ -142,9 +142,9 @@ async def on_fetch(request, env):
 
             if await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
-                return Response.new({ "len": len(emoji), "spaces": " " in emoji, "emoji": emoji, "valid": await is_valid_emoji(emoji) }, headers=response_headers, status=200)
+                return Response.new(json.dumps({ "len": len(emoji), "spaces": " " in emoji, "emoji": emoji, "valid": await is_valid_emoji(emoji) }), headers=response_headers, status=200)
             else:
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=404)
+                return Response.new(json.dumps({ code }), headers=response_headers, status=404)
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
@@ -157,14 +157,14 @@ async def on_fetch(request, env):
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
-                return Response.new({ code }, headers=response_headers, status=200)
+                return Response.new(json.dumps({ code }), headers=response_headers, status=200)
             else:
-                return Response.new({ code }, headers=response_headers, status=404)
+                return Response.new(json.dumps({ code }), headers=response_headers, status=404)
 
         else:
-            return Response.new("Path Not Found", status=404)
+            return Response.new(json.dumps("Path Not Found"), headers=response_headers, status=404)
 
     except Exception as e:
         error_details = traceback.format_exc() # Include the traceback in the response
-        return Response.new(f"Error: {str(e)}\n\nDetails:\n{error_details}", status=500)
+        return Response.new(json.dumps(f"Error: {str(e)}\n\nDetails:\n{error_details}"), headers=response_headers, status=500)
 
