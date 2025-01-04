@@ -43,19 +43,19 @@ async def get_cheeremoji(env):
     }
     return data
 
-async def handle_get_cheeremoji(request, env):
+async def handle_get_cheeremoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new(data, headers=[("content-type", "application/json")])
+    return Response.new(data, headers=response_headers)
 
-async def handle_get_cheeremoji_emoji(request, env):
+async def handle_get_cheeremoji_emoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "emoji": data["emoji"] }, headers=[("content-type", "application/json")])
+    return Response.new({ "emoji": data["emoji"] }, headers=response_headers)
 
-async def handle_get_cheeremoji_code(request, env):
+async def handle_get_cheeremoji_code(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
+    return Response.new({ "code": data["code"] }, headers=response_headers)
 
-async def handle_get_map(request, env):
+async def handle_get_map(request, env, response_headers):
     """    Handle the main request for the Emoji Map via the / path.    """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
     ## NOTE: even if it's a local JSON file in env.ASSETS you still have to env.ASSETS.fetch("http://localhost:port/file.json")
@@ -95,6 +95,7 @@ async def set_cheeremoji_code(env, code):
 async def on_fetch(request, env):
     global map
     await loadMap()
+    response_headers = [("Content-Type", "application/json; charset=utf-8")]
 
     url = urlparse(request.url)
     params = parse_qs(url.query)
@@ -113,16 +114,16 @@ async def on_fetch(request, env):
 
     try:
         if request.method == "GET" and (url.path == "/" or url.path == ""):
-            return await handle_get_cheeremoji(request, env)
+            return await handle_get_cheeremoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/emoji/?$", url.path.lower()):
-            return await handle_get_cheeremoji_emoji(request, env)
+            return await handle_get_cheeremoji_emoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/code/?$", url.path.lower()):
-            return await handle_get_cheeremoji_code(request, env)
+            return await handle_get_cheeremoji_code(request, env, response_headers)
 
         elif request.method == "GET" and url.path.lower().strip("/") == "/map":
-            return await handle_get_map(request, env)
+            return await handle_get_map(request, env, response_headers)
         
         elif request.method == "GET" and re.match(r"^/emoji/.+/?$", url.path.lower()):
             ## FIXME: Find a better way to parse the emoji from the URL so it doesn't end up as hex
