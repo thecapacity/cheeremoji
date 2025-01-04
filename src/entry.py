@@ -105,7 +105,7 @@ async def on_fetch(request, env):
         elif request.method == "GET" and re.match(r"^/code/?$", url.path.lower()):
             return await handle_get_cheeremoji_code(request, env)
 
-        elif request.method == "GET" and (url.path.lower() == "/map" or url.path.lower() == "/map/"):
+        elif request.method == "GET" and url.path.lower().strip("/") == "/map":
             return await handle_get_map(request, env)
         
 
