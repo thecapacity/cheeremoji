@@ -31,16 +31,6 @@ async def handle_main(request, env):
 
     return Response.new(result, headers=headers)
 
-
-async def handle_msg(request, env):
-    try:
-        return Response.new({
-            "message": "Here is an example of getting an environment variable: "
-            + env.MESSAGE
-        })
-    except AttributeError:
-        return Response.new({"error": "Environment variable MESSAGE not found"}, status=500)
-
 async def get_count(request, env):
     count = await env.EMOJI_API.get("count")
     await env.EMOJI_API.put("count", int(count) + 1)
@@ -86,9 +76,6 @@ async def on_fetch(request, env):
         if url.path == "/":
             return await handle_main(request, env)
         
-        elif url.path == "/msg":
-            return await handle_msg(request, env)
-
         elif request.method == "GET" and (url.path == "/count" or url.path == "/count/"):
             return await get_count(request, env)
         
