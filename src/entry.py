@@ -1,4 +1,5 @@
 import re
+import json
 from urllib.parse import urlparse, parse_qs
 import traceback
 
@@ -11,7 +12,20 @@ from js import Response, Object, Headers, JSON, console, fetch
 ## Lang: https://developers.cloudflare.com/workers/languages/python/
 ## Logging: https://developers.cloudflare.com/workers/languages/python/examples/#emit-logs-from-your-python-worker
 
-async def handle_main(request, env):
+## emoji/🥇
+## :1st_place_medal:
+
+map = None
+async def loadMap():
+    global map   
+    if map is None:
+        getMapResponse = await fetch("https://cheeremoji.com/emojiMap.json")
+        MapData = JSON.stringify(await getMapResponse.json())
+        map = json.loads(MapData)
+        map.update({"205": "MYVALUEs"})
+
+    return
+
     """    Handle the main request for the Emoji Map via the / path.    """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
     ## NOTE: even if it's a local JSON file in env.ASSETS you still have to env.ASSETS.fetch("http://localhost:port/file.json")
@@ -61,6 +75,8 @@ async def set_count_post(request, env):
     return Response.new({ "count": count })
 
 async def on_fetch(request, env):
+    global map
+    await loadMap()
     url = urlparse(request.url)
     params = parse_qs(url.query)
 
@@ -72,6 +88,8 @@ async def on_fetch(request, env):
     console.log(f"Handling fetch: {url.path}")
     console.log(f"Method: {request.method}")
     console.log(f"Parms: {params}")
+    console.log(f"nData: {len(map.keys())}")
+    
     ##console.log(f"{dir(env.ASSETS)}")
 
     try:
