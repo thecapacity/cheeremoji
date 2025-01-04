@@ -19,7 +19,7 @@
         let emojiMap = {};
 
         function loadEmojiMap(callback) {
-            fetch('emojiMap.json')
+            fetch('static/emojiMap.json')
                 .then(response => response.json())
                 .then(data => {
                     emojiMap = data;
