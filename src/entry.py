@@ -146,7 +146,6 @@ async def on_fetch(request, env):
             return await handle_get_cheeremoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
-            ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
             path = url.path.strip("/").split("/")
             code = path[1]
             code = code.replace(":", "").lower()
