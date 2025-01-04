@@ -83,52 +83,7 @@
             }
         }
 
-        var substringMatcher = function(strs) { // via https://twitter.github.io/typeahead.js/examples/
-            return function findMatches(q, cb) {
-                var matches = [];
-                var substringRegex = new RegExp(q, 'i');
-
-                if (q.length <= 1) {
-                    return matches;
-                }
-
-                $.each(strs, function(i, str) {
-                    if (substringRegex.test(str)) {
-                        matches.push(str);
-                    }
-                });
-
-                cb(matches);
-            };
-        };
-
         window.onload = function() {
-            loadEmojiMap(() => {
-                // Initialize Typeahead after loading emojiMap
-                $('#emoji-input').typeahead({
-                        hint: true,
-                        highlight: true,
-                        minLength: 1
-                    },
-                    {
-                        name: 'emojiMap',
-                        source: substringMatcher(Object.keys(emojiMap)),
-                        display: function(suggestion) {
-                            return suggestion;
-                        },
-                        templates: {
-                            suggestion: function(suggestion) {
-                                return `<div class="tt-suggestion">${suggestion}<span>${emojiMap[suggestion]}</span></div>`;
-                            }
-                        }
-                    });
-    
-                // Update emoji display on selection
-                $('#emoji-input').bind('typeahead:select', function(ev, suggestion) {
-                    $('#emoji-input').typeahead('val', suggestion);
-                    document.getElementById('emoji').textContent = emojiMap[suggestion];
-                });
-            });
             document.addEventListener('DOMContentLoaded', loadEmojiMap);
             document.addEventListener('DOMContentLoaded', fetchEmoji);
             // Run fetchEmoji periodically every 30 seconds
