@@ -142,9 +142,8 @@ async def on_fetch(request, env):
 
             if await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
-                return Response.new(json.dumps({ "len": len(emoji), "spaces": " " in emoji, "emoji": emoji, "valid": await is_valid_emoji(emoji) }), headers=response_headers, status=200)
-            else:
-                return Response.new(json.dumps({ code }), headers=response_headers, status=404)
+            
+            return await handle_get_cheeremoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
@@ -158,6 +157,9 @@ async def on_fetch(request, env):
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
                 return Response.new(json.dumps({ code }), headers=response_headers, status=200)
+            
+            return await handle_get_cheeremoji(request, env, response_headers)
+
         elif request.method == "POST":
             data = await request.json()
             data = data.to_py()
@@ -168,7 +170,6 @@ async def on_fetch(request, env):
                 emoji = data.get("emoji", None)
                 code = data.get("code", None)
             else:
-                return Response.new(json.dumps({ code }), headers=response_headers, status=404)
                 emoji = None
                 code = None
             
