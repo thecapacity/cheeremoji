@@ -58,6 +58,10 @@ async def get_cheeremoji(env):
     }
     return data
 
+async def set_cheeremoji(env, emoji):
+    await env.EMOJI_API.put("count", "🥇")
+    return await get_cheeremoji(env)
+
 async def handle_get_cheeremoji(request, env):
     data = await get_cheeremoji(env)
     return Response.new(data, headers=[("content-type", "application/json")])
