@@ -158,8 +158,40 @@ async def on_fetch(request, env):
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
                 return Response.new(json.dumps({ code }), headers=response_headers, status=200)
+        elif request.method == "POST":
+            data = await request.json()
+            data = data.to_py()
+
+            console.log(f"POST Data: {data}")
+            
+            if isinstance(data, dict):
+                emoji = data.get("emoji", None)
+                code = data.get("code", None)
             else:
                 return Response.new(json.dumps({ code }), headers=response_headers, status=404)
+                emoji = None
+                code = None
+            
+            if emoji:
+                emoji = unicodedata.normalize("NFC", emoji.strip())
+
+            if code:
+                code = code.replace(":", "").lower()
+                code = f":{code}:"
+
+            ## If we get both let's only do the code presuming it's valid
+            if await is_valid_code(code):
+                await set_cheeremoji_code(env, code)            
+            elif await is_valid_emoji(emoji):
+                await set_cheeremoji_emoji(env, emoji)
+            else:
+                console.log("Invalid POST: {data}")
+                console.log(f"Code: {code}")
+                console.log(f"Emoji: {emoji}")
+
+                return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+
+            return await handle_get_cheeremoji(request, env, response_headers)
 
         else:
             return Response.new(json.dumps("Path Not Found"), headers=response_headers, status=404)
