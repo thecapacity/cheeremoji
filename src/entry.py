@@ -157,9 +157,9 @@ async def on_fetch(request, env):
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=200)
+                return Response.new({ code }, headers=response_headers, status=200)
             else:
-                return Response.new({ code }, headers=[("content-type", "application/json")], status=404)
+                return Response.new({ code }, headers=response_headers, status=404)
 
         else:
             return Response.new("Path Not Found", status=404)
