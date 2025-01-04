@@ -21,6 +21,30 @@
             padding: 0.5em;
         }
 
+        #suggestions {
+            position: absolute;
+            width: 50%;
+            margin: 0 auto;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            display: none;
+            z-index: 1000;
+        }
+
+        #suggestions div {
+            padding: 0.5em;
+            cursor: pointer;
+        }
+
+        #suggestions div:hover {
+            background: #f0f0f0;
+        }
+
         #output {
             margin-top: 2em;
             font-size: 1em;
