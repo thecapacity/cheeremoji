@@ -98,6 +98,37 @@
             return emojiRegex.test(input);
         }
 
+        function showSuggestions(input) {
+            const suggestionsBox = document.getElementById('suggestions');
+            suggestionsBox.innerHTML = '';
+            if (!input) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            const matches = Object.keys(emojiMap).filter(key => 
+                key.toLowerCase().includes(input.toLowerCase()) ||
+                emojiMap[key].toLowerCase().includes(input.toLowerCase())
+            );
+
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            matches.forEach(match => {
+                const suggestion = document.createElement('div');
+                suggestion.textContent = `${match} (${emojiMap[match]})`;
+                suggestion.addEventListener('click', () => {
+                    document.getElementById('emoji-input').value = match;
+                    suggestionsBox.style.display = 'none';
+                });
+                suggestionsBox.appendChild(suggestion);
+            });
+
+            suggestionsBox.style.display = 'block';
+        }
+
         window.onload = function() {
             document.addEventListener('DOMContentLoaded', loadEmojiMap);
             document.addEventListener('DOMContentLoaded', fetchEmoji);
