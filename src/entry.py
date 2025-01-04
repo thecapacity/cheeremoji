@@ -1,6 +1,8 @@
 import re
 import json
-from urllib.parse import urlparse, parse_qs
+import unicodedata
+from urllib.parse import urlparse, parse_qs, unquote
+
 import traceback
 
 from js import Response, Object, Headers, JSON, console, fetch
