@@ -156,7 +156,6 @@ async def on_fetch(request, env):
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
-                return Response.new(json.dumps({ code }), headers=response_headers, status=200)
             
             return await handle_get_cheeremoji(request, env, response_headers)
 
