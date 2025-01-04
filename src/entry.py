@@ -127,8 +127,9 @@ async def on_fetch(request, env):
         
         elif request.method == "GET" and re.match(r"^/emoji/.+/?$", url.path.lower()):
             path = url.path.strip("/").split("/")
-            emoji = path[1]
             return Response.new({ emoji, await is_valid_emoji(emoji) }, headers=[("content-type", "application/json")])
+            emoji = unquote(path[1]) ## Emojis are passed in as percent-encoded format 
+            emoji = unicodedata.normalize("NFC", emoji.strip()) #NFC: Composes characters into their canonical form (recommended for matching).
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             ## FIXME: Find a better way to parse the shortcode from the URL - with or without the colon
