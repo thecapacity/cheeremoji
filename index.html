@@ -102,7 +102,11 @@
             document.addEventListener('DOMContentLoaded', loadEmojiMap);
             document.addEventListener('DOMContentLoaded', fetchEmoji);
             setInterval(fetchEmoji, 30000); // run every 30 seconds
-            
+
+            document.getElementById('emoji-input').addEventListener('input', function(event) {
+                showSuggestions(event.target.value);
+            });
+
             document.getElementById('emoji-form').addEventListener('submit', async function(event) {
                 event.preventDefault();
                 const input = document.getElementById('emoji-input').value.trim();
