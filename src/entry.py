@@ -66,11 +66,11 @@ async def handle_get_cheeremoji(request, env):
     data = await get_cheeremoji(env)
     return Response.new(data, headers=[("content-type", "application/json")])
 
-async def handle_cheeremoji_get_emoji(request, env):
+async def handle_get_cheeremoji_emoji(request, env):
     data = await get_cheeremoji(env)
     return Response.new({ "emoji": data["emoji"] }, headers=[("content-type", "application/json")])
 
-async def handle_cheeremoji_get_code(request, env):
+async def handle_get_cheeremoji_code(request, env):
     data = await get_cheeremoji(env)
     return Response.new({ "code": data["code"] }, headers=[("content-type", "application/json")])
 
