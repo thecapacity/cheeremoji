@@ -17,6 +17,11 @@ from js import Response, Object, Headers, JSON, console, fetch
 ## emoji/🥇
 ## :1st_place_medal:
 
+from pyodide.ffi import to_js as _to_js
+# to_js converts between Python dictionaries and JavaScript Objects
+def to_js(obj):
+   return _to_js(obj, dict_converter=Object.fromEntries)
+
 map = None
 async def loadMap():
     global map   
