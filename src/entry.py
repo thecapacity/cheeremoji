@@ -188,7 +188,7 @@ async def on_fetch(request, env):
                 emoji = unicodedata.normalize("NFC", emoji.strip())
 
             if code:
-                code = code.replace(":", "")
+                code = code.strip().replace(":", "")
                 code = f":{code}:"
 
             ## If we get both let's prioritize only doing the code presuming it's valid
