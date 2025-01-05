@@ -82,8 +82,8 @@
             try {
                 const response = await fetch('https://api.cheeremoji.com/');
                 if (!response.ok) {
-                    console.log(`HTTP error! status: ${response.status}`);
-                    console.log(`HTTP error! status: ${response}`);
+                    console.log(`Error, can't get CheerEmoji: ${response.status}`);
+                    console.log(`HTTP response: ${response}`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
