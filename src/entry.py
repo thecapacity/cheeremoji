@@ -66,6 +66,7 @@ async def handle_get_cheeremoji_code(request, env, response_headers):
 
 async def handle_get_map(request, env, response_headers):
     """    Handle the main request for the Emoji Map via the / path.    """
+    """    NOTE: NOT USED ANYMORE!                                      """
     ## https://developers.cloudflare.com/workers/examples/fetch-json/
     ## NOTE: even if it's a local JSON file in env.ASSETS you still have to env.ASSETS.fetch("http://localhost:port/file.json")
     ## NOTE: might as well just get it from the static site
