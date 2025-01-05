@@ -203,7 +203,7 @@ async def on_fetch(request, env):
                 console.log(f"BAD POST Code: {code}")
                 console.log(f"BAD POST Emoji: {emoji}")
 
-                ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=404)
+                return Response.new(json.dumps({"error": "Invalid POST", data: data}), headers=response_headers, status=404)
 
             ##return await handle_get_cheeremoji(request, env, response_headers)
             ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
