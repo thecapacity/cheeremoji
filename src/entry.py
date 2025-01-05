@@ -186,13 +186,17 @@ async def on_fetch(request, env):
             elif await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
             else:
-                console.log("Invalid POST: {data}")
+                console.log(f"BAD POST: {url.path}")
+                console.log(f"Data: {data}")
+                console.log(f"Headers Headers: {dict(request.headers)}")
                 console.log(f"Code: {code}")
                 console.log(f"Emoji: {emoji}")
 
-                return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+                ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=200)
 
-            return await handle_get_cheeremoji(request, env, response_headers)
+            ##return await handle_get_cheeremoji(request, env, response_headers)
+            ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+            return Response.new( json.dumps(await get_cheeremoji(env)), headers=response_headers, status=200)
 
         else:
             return Response.new(json.dumps("Path Not Found"), headers=response_headers, status=404)
