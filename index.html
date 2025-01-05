@@ -210,18 +210,21 @@
                 const endpoint = isEmoji(input) ? `/emoji/${encodedInput}` : `/code/${encodedInput}`;
 
                 try {
-                    //const response = await fetch(`https://api.cheeremoji.com${endpoint}`);
                     console.log('Endpoint:', endpoint); // Debug log
-                    const response = await fetch(`https://api.cheeremoji.com${endpoint}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(isEmoji(input) ? { emoji: input } : { code: input }),
-                    });
-
-                    const result = await response.json();
-                    
+                    try: {
+                        const response = await fetch(`https://api.cheeremoji.com${endpoint}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(isEmoji(input) ? { emoji: input } : { code: input }),
+                        });
+                        const result = await response.json();
+                    } catch (error) {
+                        const response = await fetch(`https://api.cheeremoji.com${endpoint}`);
+                        const result = await response.json();
+                    } // Fallback to a GET request if POST fails
+                                        
                     if (!response.ok) {
                         console.log(`HTTP error! status: ${response.status}`);
                         console.log(`HTTP error! status: ${response}`);
