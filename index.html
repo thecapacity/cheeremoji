@@ -73,7 +73,6 @@
                 .then(response => response.json())
                 .then(data => {
                     emojiMap = data;
-                    callback();
                 })
                 .catch(error => console.error('Error loading emoji map:', error));
         }
