@@ -242,6 +242,7 @@
                         document.getElementById('output').innerText = JSON.stringify(result, null, 2);
                     }
                 }
+                await fetchEmoji(); // Win orloose let's update the emoji in case someone else changed it
             });
         };
     </script>
