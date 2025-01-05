@@ -146,6 +146,10 @@ async def on_fetch(request, env):
 
             if await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
+            else:
+                console.log(f"GET BAD EMOJI: {url.path}")
+                console.log(f"GET BAD EMOJI Headers: {dict(request.headers)}")
+                console.log(f"GET BAD EMOJI: {emoji}")
             
             return await handle_get_cheeremoji(request, env, response_headers)
 
@@ -157,6 +161,10 @@ async def on_fetch(request, env):
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
+            else:
+                console.log(f"GET BAD CODE PATH: {url.path}")
+                console.log(f"GET BAD CODE Headers: {dict(request.headers)}")
+                console.log(f"GET BAD CODE: {code}")
             
             return await handle_get_cheeremoji(request, env, response_headers)
         
