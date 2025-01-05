@@ -120,7 +120,8 @@
 
         function isEmoji(input) {
             // Regex for Unicode emoji detection
-            const emojiRegex = /\p{Emoji}/u;
+            //const emojiRegex = /\p{Emoji}/u; // NOTE: This didn't work in some cases, e.g. :1st_place_medal: would return as true
+            const emojiRegex = /(\p{Extended_Pictographic})/u;
             return emojiRegex.test(input);
         }
 
@@ -238,7 +239,9 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(isEmoji(input) ? { emoji: input } : { code: input }),
+                        //body: JSON.stringify(isEmoji(input) ? { emoji: input } : { code: input }),
+                        // FIXME: Just send it both ways, the isEmoji() isn't working e.g. for :1st_place_medal: it says yes - trying a new regexp
+                        body: JSON.stringify({ emoji: input, code: input, is_emoji: isEmoji(input) }), 
                     });
 
                     if (!response.ok) {
@@ -264,7 +267,7 @@
                         document.getElementById('output').innerText = JSON.stringify(result, null, 2);
                     }
                 }
-                await fetchEmoji(); // Win orloose let's update the emoji in case someone else changed it
+                await fetchEmoji(); // Win or loose let's update the emoji in case someone else changed it
             });
         };
     </script>
