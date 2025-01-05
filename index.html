@@ -90,7 +90,7 @@
                 document.getElementById('output').innerText = JSON.stringify(data, null, 2);
                 document.getElementById('emoji-display').innerText = data.emoji;
             } catch (error) {
-                console.error('Error fetching initial emoji:', error);
+                console.error('Error fetching display emoji:', error);
                 document.getElementById('emoji-display').innerText = '❓';
                 document.getElementById('output').innerText = `Error fetching initial emoji: ${error.message}`;
             }
