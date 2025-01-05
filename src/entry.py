@@ -26,7 +26,11 @@ map = None
 async def loadMap():
     global map   
     if map is None:
-        getMapResponse = await fetch("https://cheeremoji.com/emojiMap.json")
+        getMapResponse = await fetch("https://cheeremoji.com/emojiMap.json", {
+            "headers": {
+            "Content-Type": "application/json"
+            }
+        })
         MapData = JSON.stringify(await getMapResponse.json())
         map = json.loads(MapData)
         console.log(f"loadMap: {map}")
