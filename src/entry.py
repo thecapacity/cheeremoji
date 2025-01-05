@@ -133,14 +133,14 @@ async def on_fetch(request, env):
         if request.method == "GET" and (url.path == "/" or url.path == ""):
             return await handle_get_cheeremoji(request, env, response_headers)
 
+        #elif request.method == "GET" and url.path.lower().strip("/") == "/map":
+        #    return await handle_get_map(request, env, response_headers)
+
         elif request.method == "GET" and re.match(r"^/emoji/?$", url.path.lower()):
             return await handle_get_cheeremoji_emoji(request, env, response_headers)
 
         elif request.method == "GET" and re.match(r"^/code/?$", url.path.lower()):
             return await handle_get_cheeremoji_code(request, env, response_headers)
-
-        elif request.method == "GET" and url.path.lower().strip("/") == "/map":
-            return await handle_get_map(request, env, response_headers)
         
         elif request.method == "GET" and re.match(r"^/emoji/.+/?$", url.path.lower()):
             path = url.path.strip("/").split("/")
