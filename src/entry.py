@@ -26,7 +26,11 @@ map = None
 async def loadMap():
     global map   
     if map is None:
-        getMapResponse = await fetch("https://cheeremoji.com/emojiMap.json")
+        getMapResponse = await fetch("https://cheeremoji.com/static/emojiMap.json", {
+            "headers": {
+            "Content-Type": "application/json"
+            }
+        })
         MapData = JSON.stringify(await getMapResponse.json())
         map = json.loads(MapData)
         console.log(f"loadMap: {map}")
@@ -50,7 +54,7 @@ async def get_cheeremoji(env):
 
 async def handle_get_cheeremoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new(json.dumps(data), headers=response_headers)
+    return Response.new( json.dumps(data), headers=response_headers)
 
 async def handle_get_cheeremoji_emoji(request, env, response_headers):
     data = await get_cheeremoji(env)
@@ -104,7 +108,7 @@ async def on_fetch(request, env):
         ("Content-Type", "application/json; charset=utf-8"),
         ("Access-Control-Allow-Origin", "*"),
         ("Access-Control-Allow-Methods", "GET, POST, OPTIONS"),
-        ("Access-Control-Allow-Headers", "Content-Type")
+        ("Access-Control-Allow-Headers", "Content-Type, Authorization")
     ]
 
     url = urlparse(request.url)
@@ -115,8 +119,7 @@ async def on_fetch(request, env):
 
     #console.log(f"pyodide Version: {pyodide.__version__}")
     #console.log(f"{dir(pyodide.ffi)}")
-    console.log(f"Handling fetch: {url.path}")
-    console.log(f"Method: {request.method}")
+    console.log(f"Handling {request.method} for: {url.path}")
     console.log(f"Parms: {params}")
     console.log(f"nData: {len(map.keys())}")
     
@@ -147,15 +150,18 @@ async def on_fetch(request, env):
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             path = url.path.strip("/").split("/")
-            code = path[1]
-            code = code.replace(":", "").lower()
+            code = unquote(path[1])
+            code = code.replace(":", "")
             code = f":{code}:"
             
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)
             
             return await handle_get_cheeremoji(request, env, response_headers)
-
+        
+        elif request.method == "OPTIONS":
+            return Response.new("", headers=response_headers, status=200)
+        
         elif request.method == "POST":
             data = await request.json()
             data = data.to_py()
@@ -173,7 +179,7 @@ async def on_fetch(request, env):
                 emoji = unicodedata.normalize("NFC", emoji.strip())
 
             if code:
-                code = code.replace(":", "").lower()
+                code = code.replace(":", "")
                 code = f":{code}:"
 
             ## If we get both let's only do the code presuming it's valid
@@ -182,13 +188,17 @@ async def on_fetch(request, env):
             elif await is_valid_emoji(emoji):
                 await set_cheeremoji_emoji(env, emoji)
             else:
-                console.log("Invalid POST: {data}")
+                console.log(f"BAD POST: {url.path}")
+                console.log(f"Data: {data}")
+                console.log(f"Headers Headers: {dict(request.headers)}")
                 console.log(f"Code: {code}")
                 console.log(f"Emoji: {emoji}")
 
-                return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+                ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=200)
 
-            return await handle_get_cheeremoji(request, env, response_headers)
+            ##return await handle_get_cheeremoji(request, env, response_headers)
+            ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
+            return Response.new( json.dumps(await get_cheeremoji(env)), headers=response_headers, status=200)
 
         else:
             return Response.new(json.dumps("Path Not Found"), headers=response_headers, status=404)
