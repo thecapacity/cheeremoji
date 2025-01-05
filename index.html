@@ -136,10 +136,13 @@
             suggestionsBox.style.display = 'block';
         }
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadEmojiMap();
+            await fetchEmoji();
+        });
+
         window.onload = function() {
-            document.addEventListener('DOMContentLoaded', loadEmojiMap);
-            document.addEventListener('DOMContentLoaded', fetchEmoji);
-            setInterval(fetchEmoji, 30000); // run every 30 seconds
+            setInterval(fetchEmoji, 10000); // run every 10 seconds
 
             document.getElementById('emoji-input').addEventListener('input', function(event) {
                 showSuggestions(event.target.value);
