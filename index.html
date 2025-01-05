@@ -226,9 +226,9 @@
                     } // Fallback to a GET request if POST fails
                                         
                     if (!response.ok) {
-                        console.log(`HTTP error! status: ${response.status}`);
-                        console.log(`HTTP error! status: ${response}`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        console.warn(`POST failed with status: ${response.status}`); // Log POST error
+                        console.warn(`POST error! status: ${response}`);
+                        throw new Error(`POST request failed with status ${response.status}`);
                     }
 
                     document.getElementById('output').innerText = JSON.stringify(result, null, 2);
