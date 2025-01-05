@@ -158,7 +158,10 @@ async def on_fetch(request, env):
                 await set_cheeremoji_code(env, code)
             
             return await handle_get_cheeremoji(request, env, response_headers)
-
+        
+        elif request.method == "OPTIONS":
+            return Response.new("", headers=response_headers, status=200)
+        
         elif request.method == "POST":
             data = await request.json()
             data = data.to_py()
