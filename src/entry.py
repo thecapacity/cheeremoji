@@ -92,18 +92,14 @@ async def handle_get_map(request, env, response_headers):
 async def set_cheeremoji_emoji(env, emoji):
     code = next((key for key, value in map.items() if value == emoji), None)
     if await is_valid_code(code):
-        #console.log(f"Setting emoji to: {code} -> {emoji}")
+        console.log(f"Setting emoji to: {code} -> {emoji}")
         await env.EMOJI_API.put("code", code)
-    else:
-        console.warn(f"UNKNOWN INVALID emoji: {emoji}")
     return
 
 async def set_cheeremoji_code(env, code):
     if await is_valid_code(code):
-        #console.log(f"Setting emoji to code: {code}")
+        console.log(f"Setting emoji to code: {code}")
         await env.EMOJI_API.put("code", code)
-    else:
-        console.warn(f"UNKNOWN INVALID code: {code}")
     return
 
 async def on_fetch(request, env):
