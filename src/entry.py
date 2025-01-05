@@ -33,7 +33,7 @@ async def loadMap():
         })
         MapData = JSON.stringify(await getMapResponse.json())
         map = json.loads(MapData)
-        console.log(f"loadMap: {map}")
+        console.log(f"loadMap: {len(map.keys())}")
     return
 
 async def is_valid_emoji(emoji):
@@ -84,21 +84,25 @@ async def handle_get_map(request, env, response_headers):
 
     headers = Headers.new({"content-type": content_type}.items())
 
-    console.log(f"getMap: {result}")
+    #console.log(f"getMap: {result}")
 
     return Response.new(result, headers=headers)
 
 async def set_cheeremoji_emoji(env, emoji):
     code = next((key for key, value in map.items() if value == emoji), None)
     if await is_valid_code(code):
-        console.log(f"Setting emoji to: {code} -> {emoji}")
+        #console.log(f"Setting emoji to: {code} -> {emoji}")
         await env.EMOJI_API.put("code", code)
+    else:
+        console.warn(f"UNKNOWN INVALID emoji: {emoji}")
     return
 
 async def set_cheeremoji_code(env, code):
     if await is_valid_code(code):
-        console.log(f"Setting emoji to code: {code}")
+        #console.log(f"Setting emoji to code: {code}")
         await env.EMOJI_API.put("code", code)
+    else:
+        console.warn(f"UNKNOWN INVALID code: {code}")
     return
 
 async def on_fetch(request, env):
@@ -120,8 +124,8 @@ async def on_fetch(request, env):
     #console.log(f"pyodide Version: {pyodide.__version__}")
     #console.log(f"{dir(pyodide.ffi)}")
     console.log(f"Handling {request.method} for: {url.path}")
-    console.log(f"Parms: {params}")
-    console.log(f"nData: {len(map.keys())}")
+    #console.log(f"Parms: {params}")
+    #console.log(f"nData: {len(map.keys())}")
     
     ##console.log(f"{dir(env.ASSETS)}")
 
@@ -182,19 +186,19 @@ async def on_fetch(request, env):
                 code = code.replace(":", "")
                 code = f":{code}:"
 
-            ## If we get both let's only do the code presuming it's valid
+            ## If we get both let's prioritize only doing the code presuming it's valid
             if await is_valid_code(code):
                 await set_cheeremoji_code(env, code)            
-            elif await is_valid_emoji(emoji):
+            elif await is_valid_emoji(emoji):  ## If not a valid code, then check if it's a valid emoji and do that
                 await set_cheeremoji_emoji(env, emoji)
             else:
                 console.log(f"BAD POST: {url.path}")
-                console.log(f"Data: {data}")
                 console.log(f"Headers Headers: {dict(request.headers)}")
+                console.log(f"Data: {data}")
                 console.log(f"Code: {code}")
                 console.log(f"Emoji: {emoji}")
 
-                ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=200)
+                ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=404)
 
             ##return await handle_get_cheeremoji(request, env, response_headers)
             ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
