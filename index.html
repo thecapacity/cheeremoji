@@ -77,7 +77,7 @@
     <div>
         <div id="emoji-display"></div>
         <form id="emoji-form">
-            <input type="text" id="emoji-input" placeholder="Emoji or shortcode" autocomplete="off"/>
+            <input type="text" id="emoji-input" placeholder="shortcode or emoji" autocomplete="off"/>
             <div id="suggestions"></div>
         </form>
         <pre id="output"></pre>
@@ -251,7 +251,7 @@
                     }
 
                     const result = await response.json();
-                    document.getElementById('output').innerText = JSON.stringify(result, null, 2);
+                    document.getElementById('output').innerText = "POST: " + JSON.stringify(result, null, 2);
                 } catch (postError) {
                     console.error('POST request failed, retrying with GET:', postError.message); // Log POST failure
                     try {
@@ -261,10 +261,10 @@
                         }
 
                         const getResult = await getResponse.json();
-                        document.getElementById('output').innerText = JSON.stringify(getResult, null, 2);
+                        document.getElementById('output').innerText = "GET: " + JSON.stringify(getResult, null, 2);
                     } catch (getError) {
                         console.error('GET request also failed:', getError.message); // Log GET error
-                        document.getElementById('output').innerText = JSON.stringify(result, null, 2);
+                        document.getElementById('output').innerText = "ERROR: " + JSON.stringify(result, null, 2);
                     }
                 }
                 await fetchEmoji(); // Win or loose let's update the emoji in case someone else changed it
