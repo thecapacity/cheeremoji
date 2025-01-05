@@ -151,7 +151,7 @@ async def on_fetch(request, env):
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             path = url.path.strip("/").split("/")
             code = unquote(path[1])
-            code = code.replace(":", "").lower()
+            code = code.replace(":", "")
             code = f":{code}:"
             
             if await is_valid_code(code):
@@ -179,7 +179,7 @@ async def on_fetch(request, env):
                 emoji = unicodedata.normalize("NFC", emoji.strip())
 
             if code:
-                code = code.replace(":", "").lower()
+                code = code.replace(":", "")
                 code = f":{code}:"
 
             ## If we get both let's only do the code presuming it's valid
