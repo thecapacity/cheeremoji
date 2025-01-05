@@ -53,6 +53,24 @@
         .selected {
             background-color: #e0e0e0;
         }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #eeeeee;
+            padding: 0.5em;
+            text-align: center;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +82,10 @@
         </form>
         <pre id="output"></pre>
     </div>
+
+    <footer>
+        <a href="about.html">About CheerEmoji</a>
+    </footer>
 
     <script>
         let emojiMap = {};
