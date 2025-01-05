@@ -101,6 +101,7 @@
         function showSuggestions(input) {
             const suggestionsBox = document.getElementById('suggestions');
             suggestionsBox.innerHTML = '';
+            console.log('User input:', input); // Debug log
             if (!input) {
                 suggestionsBox.style.display = 'none';
                 return;
@@ -110,6 +111,8 @@
                 key.toLowerCase().includes(input.toLowerCase()) ||
                 emojiMap[key].toLowerCase().includes(input.toLowerCase())
             );
+
+            console.log('Matches found:', matches); // Debug log
 
             if (matches.length === 0) {
                 suggestionsBox.style.display = 'none';
