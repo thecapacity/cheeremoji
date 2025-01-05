@@ -147,7 +147,7 @@ async def on_fetch(request, env):
 
         elif request.method == "GET" and re.match(r"^/code/.+/?$", url.path.lower()):
             path = url.path.strip("/").split("/")
-            code = path[1]
+            code = unquote(path[1])
             code = code.replace(":", "").lower()
             code = f":{code}:"
             
