@@ -197,11 +197,11 @@ async def on_fetch(request, env):
             elif await is_valid_emoji(emoji):  ## If not a valid code, then check if it's a valid emoji and do that
                 await set_cheeremoji_emoji(env, emoji)
             else:
-                console.log(f"BAD POST: {url.path}")
-                console.log(f"Headers Headers: {dict(request.headers)}")
-                console.log(f"Data: {data}")
-                console.log(f"Code: {code}")
-                console.log(f"Emoji: {emoji}")
+                console.log(f"BAD POST Path: {url.path}")
+                console.log(f"BAD POST Headers: {dict(request.headers)}")
+                console.log(f"BAD POST Data: {data}")
+                console.log(f"BAD POST Code: {code}")
+                console.log(f"BAD POST Emoji: {emoji}")
 
                 ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=404)
 
