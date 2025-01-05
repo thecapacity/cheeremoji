@@ -206,7 +206,6 @@ async def on_fetch(request, env):
                 return Response.new(json.dumps({"error": "Invalid POST", data: data}), headers=response_headers, status=404)
 
             ##return await handle_get_cheeremoji(request, env, response_headers)
-            ## return Response.new(json.dumps("Invalid POST"), headers=response_headers, status=400)
             return Response.new( json.dumps(await get_cheeremoji(env)), headers=response_headers, status=200)
 
         else:
