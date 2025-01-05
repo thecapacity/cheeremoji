@@ -50,7 +50,7 @@ async def get_cheeremoji(env):
 
 async def handle_get_cheeremoji(request, env, response_headers):
     data = await get_cheeremoji(env)
-    return Response.new(json.dumps(data), headers=response_headers)
+    return Response.new( json.dumps(data), headers=response_headers)
 
 async def handle_get_cheeremoji_emoji(request, env, response_headers):
     data = await get_cheeremoji(env)
