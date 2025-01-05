@@ -119,8 +119,7 @@ async def on_fetch(request, env):
 
     #console.log(f"pyodide Version: {pyodide.__version__}")
     #console.log(f"{dir(pyodide.ffi)}")
-    console.log(f"Handling fetch: {url.path}")
-    console.log(f"Method: {request.method}")
+    console.log(f"Handling {request.method} for: {url.path}")
     console.log(f"Parms: {params}")
     console.log(f"nData: {len(map.keys())}")
     
