@@ -13,3 +13,7 @@ Note, some debugging messaging is inconsistent and/or I couldn't figure out (e.g
 
 - `main` is for local development
 - `publish` gets pushed to Cloudflare via a GitHub Action [deployment script](https://github.com/thecapacity/cheeremoji/blob/main/.github/workflows/deploy.yaml)
+
+
+#### Misc
+- `noted.md` maintained some working notes / references as I developed - may still be useful to some
