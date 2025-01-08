@@ -195,7 +195,7 @@
         });
 
         window.onload = function() {
-            setInterval(fetchEmoji, 5000); // run every 5 seconds
+            setInterval(fetchEmoji, 1000); // run every 1 second
 
             document.getElementById('emoji-input').addEventListener('input', function(event) {
                 showSuggestions(event.target.value);
