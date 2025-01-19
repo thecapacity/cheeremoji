@@ -1,11 +1,14 @@
 import re
 import json
 import unicodedata
+
+from functools import partial
 from urllib.parse import urlparse, parse_qs, unquote
 
 import traceback
 
-from js import Response, Object, Headers, JSON, console, fetch
+from js import Response, Object, Headers, JSON, console, fetch, WebSocketPair
+from asgi import process_websocket as app, request_to_scope
 
 ## Example from: https://github.com/cloudflare/python-workers-examples/blob/main/03-fastapi/src/worker.py
 ##    - https://developers.cloudflare.com/workers/examples/
