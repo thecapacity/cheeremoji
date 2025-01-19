@@ -1,11 +1,14 @@
 import re
 import json
 import unicodedata
+
+from functools import partial
 from urllib.parse import urlparse, parse_qs, unquote
 
 import traceback
 
-from js import Response, Object, Headers, JSON, console, fetch
+from js import Response, Object, Headers, JSON, console, fetch, WebSocketPair
+from asgi import process_websocket as app, request_to_scope
 
 ## Example from: https://github.com/cloudflare/python-workers-examples/blob/main/03-fastapi/src/worker.py
 ##    - https://developers.cloudflare.com/workers/examples/
@@ -102,9 +105,67 @@ async def set_cheeremoji_code(env, code):
         await env.EMOJI_API.put("code", code)
     return
 
+async def process_websocket(app, req):
+    client, server = WebSocketPair.new().object_values()
+    server.accept()
+    queue = Queue()
+
+    def onopen(evt):
+        msg = {"type": "websocket.connect"}
+        queue.put_nowait(msg)
+
+    # onopen doesn't seem to get called. WS lifecycle events are a bit messed up
+    # here.
+    onopen(1)
+
+    def onclose(evt):
+        msg = {"type": "websocket.close", "code": evt.code, "reason": evt.reason}
+        queue.put_nowait(msg)
+
+    def onmessage(evt):
+        msg = {"type": "websocket.receive", "text": evt.data}
+        queue.put_nowait(msg)
+
+    server.onopen = onopen
+    server.onopen = onclose
+    server.onmessage = onmessage
+
+    async def ws_send(got):
+        if got["type"] == "websocket.send":
+            b = got.get("bytes", None)
+            s = got.get("text", None)
+            if b:
+                with acquire_js_buffer(b) as jsbytes:
+                    # Unlike the `Response` constructor,  server.send seems to
+                    # eagerly copy the source buffer
+                    server.send(jsbytes)
+            if s:
+                server.send(s)
+
+        else:
+            print(" == Not implemented", got["type"])
+
+    async def ws_receive():
+        received = await queue.get()
+        return received
+
+    env = {}
+    run_in_background(app(request_to_scope(req, env, ws=True), ws_receive, ws_send))
+
+    return Response.new(None, status=101, webSocket=client)
+
+
+
 async def on_fetch(request, env):
     global map
     await loadMap()
+    if False and not hasattr(env, 'background_task'):
+        async def background_task():
+            while True:
+                await broadcast_update(env)
+                await asyncio.sleep(60)  # Adjust the interval as needed
+
+        env.background_task = asyncio.create_task(background_task())
     response_headers = [
         ("Content-Type", "application/json; charset=utf-8"),
         ("Access-Control-Allow-Origin", "*"),
@@ -129,6 +190,61 @@ async def on_fetch(request, env):
     try:
         if request.method == "GET" and (url.path == "/" or url.path == ""):
             return await handle_get_cheeremoji(request, env, response_headers)
+
+        elif request.method == "GET" and url.path.lower() == "/ws":
+            #console.log(f"WebSocket client connected: {request.url}")
+            console.log(f"Websocket Headers: {dict(request.headers)}")
+            #console.log(f"Request Method: {request.method}")
+            #console.log(f"Request Params: {params}")
+    
+            if request.headers.get("Upgrade", None) == "websocket":
+                web_socket_pair = WebSocketPair.new(request)
+                client, server = Object.values(web_socket_pair)
+
+                #console.log(f"WebSocket Pair: {web_socket_pair}")
+                console.log(f"\tWebSocket Client: {dir(client)}")
+                console.log(f"\tWebSocket Server: {dir(server)}")
+
+                server.accept()
+                if not hasattr(env, 'clients'):
+                    env.clients = []
+                env.clients.append(server)
+
+                console.log("a")
+
+                async def handle_message(event, server, env):
+                    try:
+                        console.log(f"Message event: {event.data}")
+                        message = await get_cheeremoji(env)
+                        return server.send(message)
+
+                    except Exception as e:
+                        console.log(f"Error sending message: {e}")
+
+                async def handle_close(event, server, env):
+                    try:
+                        console.log(f"Close event: {event.code}, {event.reason}")
+                        env.clients.remove(server)
+                        return server.close(1000, "CheerEmoji Closing")
+                    except Exception as e:
+                        console.log(f"Error during close: {e}")
+
+                console.log("b")
+
+                #server.addEventListener("message", partial(handle_message, server=server, env=env))
+                #server.addEventListener("close", partial(handle_close, server=server, env=env))
+
+                #server.addEventListener("message", lambda event: asyncio.run(handle_message(event, server, env)))
+                #server.addEventListener("close", lambda event: asyncio.run(handle_close(event, server, env)))
+
+                #server.addEventListener("message", lambda event: asyncio.run(handle_message(env, server)))
+                #server.addEventListener("close", lambda event: asyncio.run(handle_close(env, server)))
+
+                console.log("c")
+
+                return Response.new(None, { "status": 101, "webSocket": client }, headers=response_headers, status=101)
+            else:
+                return Response.new("Not a websocket request", { "status": 426 })
 
         #elif request.method == "GET" and url.path.lower().strip("/") == "/map":
         #    return await handle_get_map(request, env, response_headers)
