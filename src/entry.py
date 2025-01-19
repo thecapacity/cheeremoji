@@ -159,6 +159,13 @@ async def process_websocket(app, req):
 async def on_fetch(request, env):
     global map
     await loadMap()
+    if False and not hasattr(env, 'background_task'):
+        async def background_task():
+            while True:
+                await broadcast_update(env)
+                await asyncio.sleep(60)  # Adjust the interval as needed
+
+        env.background_task = asyncio.create_task(background_task())
     response_headers = [
         ("Content-Type", "application/json; charset=utf-8"),
         ("Access-Control-Allow-Origin", "*"),
