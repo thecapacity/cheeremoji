@@ -184,6 +184,61 @@ async def on_fetch(request, env):
         if request.method == "GET" and (url.path == "/" or url.path == ""):
             return await handle_get_cheeremoji(request, env, response_headers)
 
+        elif request.method == "GET" and url.path.lower() == "/ws":
+            #console.log(f"WebSocket client connected: {request.url}")
+            console.log(f"Websocket Headers: {dict(request.headers)}")
+            #console.log(f"Request Method: {request.method}")
+            #console.log(f"Request Params: {params}")
+    
+            if request.headers.get("Upgrade", None) == "websocket":
+                web_socket_pair = WebSocketPair.new(request)
+                client, server = Object.values(web_socket_pair)
+
+                #console.log(f"WebSocket Pair: {web_socket_pair}")
+                console.log(f"\tWebSocket Client: {dir(client)}")
+                console.log(f"\tWebSocket Server: {dir(server)}")
+
+                server.accept()
+                if not hasattr(env, 'clients'):
+                    env.clients = []
+                env.clients.append(server)
+
+                console.log("a")
+
+                async def handle_message(event, server, env):
+                    try:
+                        console.log(f"Message event: {event.data}")
+                        message = await get_cheeremoji(env)
+                        return server.send(message)
+
+                    except Exception as e:
+                        console.log(f"Error sending message: {e}")
+
+                async def handle_close(event, server, env):
+                    try:
+                        console.log(f"Close event: {event.code}, {event.reason}")
+                        env.clients.remove(server)
+                        return server.close(1000, "CheerEmoji Closing")
+                    except Exception as e:
+                        console.log(f"Error during close: {e}")
+
+                console.log("b")
+
+                #server.addEventListener("message", partial(handle_message, server=server, env=env))
+                #server.addEventListener("close", partial(handle_close, server=server, env=env))
+
+                #server.addEventListener("message", lambda event: asyncio.run(handle_message(event, server, env)))
+                #server.addEventListener("close", lambda event: asyncio.run(handle_close(event, server, env)))
+
+                #server.addEventListener("message", lambda event: asyncio.run(handle_message(env, server)))
+                #server.addEventListener("close", lambda event: asyncio.run(handle_close(env, server)))
+
+                console.log("c")
+
+                return Response.new(None, { "status": 101, "webSocket": client }, headers=response_headers, status=101)
+            else:
+                return Response.new("Not a websocket request", { "status": 426 })
+
         #elif request.method == "GET" and url.path.lower().strip("/") == "/map":
         #    return await handle_get_map(request, env, response_headers)
 
