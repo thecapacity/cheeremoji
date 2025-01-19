@@ -105,6 +105,57 @@ async def set_cheeremoji_code(env, code):
         await env.EMOJI_API.put("code", code)
     return
 
+async def process_websocket(app, req):
+    client, server = WebSocketPair.new().object_values()
+    server.accept()
+    queue = Queue()
+
+    def onopen(evt):
+        msg = {"type": "websocket.connect"}
+        queue.put_nowait(msg)
+
+    # onopen doesn't seem to get called. WS lifecycle events are a bit messed up
+    # here.
+    onopen(1)
+
+    def onclose(evt):
+        msg = {"type": "websocket.close", "code": evt.code, "reason": evt.reason}
+        queue.put_nowait(msg)
+
+    def onmessage(evt):
+        msg = {"type": "websocket.receive", "text": evt.data}
+        queue.put_nowait(msg)
+
+    server.onopen = onopen
+    server.onopen = onclose
+    server.onmessage = onmessage
+
+    async def ws_send(got):
+        if got["type"] == "websocket.send":
+            b = got.get("bytes", None)
+            s = got.get("text", None)
+            if b:
+                with acquire_js_buffer(b) as jsbytes:
+                    # Unlike the `Response` constructor,  server.send seems to
+                    # eagerly copy the source buffer
+                    server.send(jsbytes)
+            if s:
+                server.send(s)
+
+        else:
+            print(" == Not implemented", got["type"])
+
+    async def ws_receive():
+        received = await queue.get()
+        return received
+
+    env = {}
+    run_in_background(app(request_to_scope(req, env, ws=True), ws_receive, ws_send))
+
+    return Response.new(None, status=101, webSocket=client)
+
+
+
 async def on_fetch(request, env):
     global map
     await loadMap()
